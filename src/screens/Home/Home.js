@@ -8,6 +8,7 @@ import { AnimatedView } from '../../ui/AnimatedView';
 import { AppHeaderIcons } from '../../ui/AppHeaderIcons';
 import { Preloader } from '../../ui/Preloader';
 import { Prompt } from '../../ui/Prompt';
+import { useScrollToTop } from '@react-navigation/native';
 
 export const Home = ({ navigation }) => {
     const dispatch = useDispatch();
@@ -17,16 +18,20 @@ export const Home = ({ navigation }) => {
 
     const [showModalInput, setShowModalInput] = useState(false);
     const [value, setValue] = useState('');
+    const [memo, setMemo] = useState(1);
 
     const [refresh, setRefresh] = useState(false);
 
     const loadNewData = useRef(true);
     const searchUser = useRef(false);
+    const scrollToUp = useRef(null);
 
     useEffect(() => {
         dispatch(getUsersThunk(1));
         dispatch(setCurrentPageCreator(1));
     }, []);
+
+    useScrollToTop(scrollToUp);
 
     navigation.setOptions({
         headerTitle: I18n.t('home'),
@@ -89,6 +94,7 @@ export const Home = ({ navigation }) => {
                 setShowModalInput={setShowModalInput}
             />
             <FlatList
+                ref={scrollToUp}
                 onEndReached={loadMore}
                 onEndReachedThreshold={2}
                 ListFooterComponent={renderLoader}
@@ -104,7 +110,9 @@ export const Home = ({ navigation }) => {
                 data={users.items}
                 renderItem={({ item, index }) => {
                     return (
-                        <AnimatedView onPress={() => navigation.navigate('OtherProfile', { id: item.id, name: item.name })}>
+                        <AnimatedView
+                            onPress={() => navigation.navigate('OtherProfile', { id: item.id, name: item.name })}
+                        >
                             <View style={styles.userBlock}>
                                 <Image
                                     style={styles.avatar}

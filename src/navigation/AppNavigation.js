@@ -53,7 +53,7 @@ const tabOptions = (Component, label, iconName) => ({
     ),
 });
 
-const HomeStack = () => {
+const HomeStack = ({ navigation }) => {
     const Stack = createStackNavigator();
     return (
         <Stack.Navigator>
